@@ -5,8 +5,8 @@
 #+ if no argument passed, Ping the IP 5 times
 
 if [ $# -eq 0 ]; then
-    echo "Usage: $0 {IP_ADDRESS}"
-    exit 1
+	echo "Usage: $0 {IP_ADDRESS}"
+	exit 1
 fi
 
 ip_address="$1"
