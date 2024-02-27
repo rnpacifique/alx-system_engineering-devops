@@ -1,24 +1,37 @@
-# 7-puppet_install_nginx_web_server.pp
-# Install Nginx package
+# Install Nginx web server with Puppet
+include stdlib
+
+$link = 'https://www.youtube.com/watch?v=QH2-TGUlwu4'
+$content = "\trewrite ^/redirect_me/$ ${link} permanent;"
+
+exec { 'update packages':
+  command => '/usr/bin/apt-get update'
+}
+
+exec { 'restart nginx':
+  command => '/usr/sbin/service nginx restart',
+  require => Package['nginx']
+}
+
 package { 'nginx':
-  ensure => 'installed',
+  ensure  => 'installed',
+  require => Exec['update packages']
 }
 
-# Create an index.html file with "Hello World" content
 file { '/var/www/html/index.html':
-  content => 'Hello World',
+  ensure  => 'present',
+  content => 'Hello World!',
+  mode    => '0644',
+  owner   => 'root',
+  group   => 'root'
 }
 
-# Configure a 301 redirect in the Nginx default configuration
-file_line { 'redirection-301':
-  ensure => 'present',
-  path   => '/etc/nginx/sites-available/default',
-  after  => 'listen 80 default_server;',
-  line   => 'rewrite ^/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;',
-}
-
-# Ensure that the Nginx service is running
-service { 'nginx':
-  ensure  => 'running',
-  require => Package['nginx'],
+file_line { 'Set 301 redirection':
+  ensure   => 'present',
+  after    => 'server_name\ _;',
+  path     => '/etc/nginx/sites-available/default',
+  multiple => true,
+  line     => $content,
+  notify   => Exec['restart nginx'],
+  require  => File['/var/www/html/index.html']
 }
