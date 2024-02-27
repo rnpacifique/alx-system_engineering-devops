@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# A web server generating and serving HTML pages
+# Update package lists for available software packages
+apt-get update
+
+# Install Nginx web server
+apt-get install -y nginx
+
+# Create the document root directory
+mkdir -p /var/www/html
+
+# Create an index.html file with "Hello World!" content
+echo "Hello World!" > /var/www/html/index.html
+
+# Configure Nginx to listen on port 80 and serve files from the document root
+printf %s "server {
+     listen      80 default_server;
+     listen      [::]:80 default_server;
+     root        /var/www/html;
+     index       index.html;
+     server_name _;
+}
+" > /etc/nginx/sites-available/default
+
+# Restart Nginx service to apply the configuration changes
+service nginx restart
