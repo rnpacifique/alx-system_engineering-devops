@@ -1,34 +1,31 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# A script that configures Nginx server to have a custom 404 page
+# Install Nginx if not already installed
+apt-get update
+apt-get install -y nginx
 
-# Update package list
-apt-get -y update
+# Create a custom 404 page with the string "Ceci n'est pas une page"
+echo "Ceci n'est pas une page" > /usr/share/nginx/html/404.html
 
-# Install Nginx
-apt-get -y install nginx
-
-# Create a simple HTML page
-echo 'Hello World!' > /var/www/html/index.html
-
-# Configure Nginx to return the Hello World page
-cat <<EOL > /etc/nginx/sites-available/default
-server {
+# Configure Nginx to use the custom 404 page
+echo "server {
     listen 80 default_server;
     listen [::]:80 default_server;
 
-    root /var/www/html;
-    index index.html index.htm index.nginx-debian.html;
+    root /usr/share/nginx/html;
+    index index.html;
 
     server_name _;
+
+    error_page 404 /404.html;
+    location = /404.html {
+        internal;
+    }
 
     location / {
         try_files \$uri \$uri/ =404;
     }
+}" > /etc/nginx/sites-available/default
 
-    location = / {
-        return 200 "Hello World!";
-    }
-}
-EOL
-
-# Restart Nginx
+# Restart Nginx to apply the configuration changes
 service nginx restart
