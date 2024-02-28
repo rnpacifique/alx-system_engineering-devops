@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# A script that can connect to a server without typing a password
+
+Host *
+    PasswordAuttication no
+    IdentifyFile ~/.ssh/school
+    SetEnv LANG LC_*
+    HashKnownHosts yes
+    GSSAPIAuthentication yes
+    GSSAPIDelegateCredentials no
