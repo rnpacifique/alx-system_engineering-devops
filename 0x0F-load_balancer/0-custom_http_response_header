@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Update package lists
+sudo apt-get update
+
+# Install Nginx
+sudo apt-get install -y nginx
+
+# Create a custom configuration file
+echo 'add_header X-Served-By $host;' | sudo tee /etc/nginx/sites-available/custom-header
+
+# Check if the symbolic link exists, and remove it if it does
+if [ -L /etc/nginx/sites-enabled/custom-header ]; then
+    sudo rm /etc/nginx/sites-enabled/custom-header
+fi
+
+# Create a symbolic link to the sites-enabled directory
+sudo ln -s /etc/nginx/sites-available/custom-header /etc/nginx/sites-enabled/
+
+# Remove default Nginx configuration
+sudo rm /etc/nginx/sites-enabled/default
+
+# Restart Nginx to apply changes
+sudo systemctl restart nginx
