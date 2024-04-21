@@ -12,7 +12,7 @@ server {
     server_name _;
 
     location /airbnb-onepage {
-        proxy_pass http://0.0.0.0:5000/airbnb-onepage;
+        proxy_pass http://github.com/rnpacifique/AirBnB_clone_v2;
     }
 
     location /hbnb_static {
